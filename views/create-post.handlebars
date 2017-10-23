@@ -7,8 +7,34 @@
         </h1>
         <div id='most-things'>
             <form id="create-post" action="post" method="post">
-                <input type="textarea" name="post" id="post-content" placeholder="put your html here"></input>
+                <textarea name="post" id="post-content" placeholder="put your html here">
+                    {{#if post}}
+
+                    {{else}}
+                        <div>
+                            put anything you want in here!!
+                        </div>
+                    {{/if}}
+                </textarea>
                 <input type="submit" value="Submit">
+                <input type="button" value="update" onclick="updatePreview()">
+            </form>
+
+            <div id="post-preview">
+
+            </div>
         </div>
+
+        <script>
+            function updatePreview() {
+                document.getElementById("post-preview").innerHTML = document.getElementById("post-content").value;
+                var arr = document.getElementById("post-preview").getElementsByTagName('script')
+                for (var n = 0; n < arr.length; n++) {
+                    console.log(arr);
+                    eval(arr[n].innerHTML)//run script inside div
+                }
+
+            }
+        </script>
     </body>
 </html>

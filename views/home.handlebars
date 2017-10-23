@@ -2,18 +2,55 @@
     <head>
     </head>
     <body>
-        <h1>
-            awful.world
-        </h1>
-        <div id='most-things'>
-            {{#each posts}}
-                <div class="post" id="{{username}}">
-                    <h1>{{title}}</h1>
-                    <div class="post-inside">
-                        {{{post}}}
+        {{#if user}}
+            <h1>
+                <a href="/">awful.world</a>
+            </h1>
+            <h3>
+                <a href="/post">post!</a>
+            </h3>
+            <h5>
+                hey @<a href="/{{user.username}}">{{user.username}}</a>
+                (<a href="/logout">logout</a>)
+            </h5>
+            <div id='most-things'>
+                {{#each posts}}
+                <div class="post" id="{{username}}/{{_id}}">
+                    <div class="post-header"><a href="/{{username}}/{{_id}}">a post</a> by @<a href="/{{username}}">{{username}}</a></div>
+                        <div class="post-inside">
+                            {{{post}}}
+                        </div>
                     </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <div id='most-things'>
+                {{user}}
+                {{error}}
+                <h1> this is a mirage </h1>
+                
+                <form id="login" action="login" method="post">
+                    <label for="login">login</label>
+
+                    <input name="username" id="post-content" placeholder="username">
+                    <input name="password" type="password" placeholder="password">
+                    <input type="submit" value="Submit">
+                </form>
+
+                <form id="register" action="register" method="post">
+                    <label for="signup">signup</label>
+                    <input name="username" id="post-content" placeholder="username">
+                    <input name="password" type="password" placeholder="password">
+                    <input type="submit" value="Submit">
+                </form>
+
+
+                <div id="post-preview">
+
                 </div>
-            {{/each}}
-        </div>
+            </div>
+
+
+        {{/if}}
     </body>
 </html>
