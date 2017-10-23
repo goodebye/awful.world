@@ -1,0 +1,19 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>
+            awful.world
+        </h1>
+        <div id='most-things'>
+            {{#each posts}}
+                <div class="post" id="{{username}}">
+                    <h1>{{title}}</h1>
+                    <div class="post-inside">
+                        {{{post}}}
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </body>
+</html>
