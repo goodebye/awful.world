@@ -7,8 +7,18 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
 const mn = require('./magic_numbers.json');
+const dblogin = require('./dbsecrets.json');
 
-mongoose.connect('mongodb://localhost/');
+if (process.env.mode == "PRODUCTION") { 
+    mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@ds231245.mlab.com:31245/awfulworld`, {authMechanism: 'ScramSHA1'}).then(
+        () => {},
+        err => {  console.log(err);  }
+    )
+}
+else {
+    mongoose.connect("mongodb://localhost/aw");
+}
+
 mongoose.Promise = global.Promise;
 
 // models
