@@ -1,6 +1,8 @@
 body {
     font-family: Arial;
     font-size: 1em;
+    background-image: url("/pix/star_tex.png");
+    background-repeat: repeat;
 }
 
 button {
@@ -21,6 +23,15 @@ button {
 #login-button {
     margin: 10px;
     padding: 10px 40px;
+}
+
+#mirage {
+    background-color: #fff;
+    padding: 10px;
+}
+
+#login {
+    margin: 20px;
 }
 
 .post {
