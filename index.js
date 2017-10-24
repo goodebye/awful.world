@@ -69,12 +69,18 @@ app.get('/', function(req, res) {
     }).catch(function(err) { console.log(err) });;
     }
     else {
-        res.render('home');
+        let error;
+
+        if (req.query.nicetry) {
+            error = "you aren't allowed to do that!! not logged in!!!"
+        }
+        res.render('home', { error: error });
     }
 });
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/', failureFlash: true }), (req, res, next) => {
     req.session.save((err) => {
+
         if (err) {
             return next(err);
         }
@@ -85,7 +91,6 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/', failur
 app.post('/invite/register', (req, res) => {
     if (req.body.invite_id) {
         Invite.findById(req.body.invite_id, function(err, invite) {
-            console.log(" boiadfjsad" + err + invite + invite.active);
             if (!err && invite && invite.active) {
                 User.register(new User({ username : req.body.username, inviteId: invite._id}), req.body.password, (err, user) => {
                     if (err) {
@@ -206,8 +211,8 @@ function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-
-    res.redirect('/');
+    
+    res.redirect('/?nicetry=1');
 }
 
 app.listen(port, function() {

@@ -18,13 +18,14 @@
         <button id="toggle-visibility" onclick="toggleEditor()">t<br/>o<br/>g<br/>g<br/>l<br/>e</button>
 
         <script src="/js/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/js/ace-mode-html.js" type="text/javascript" charset="utf-8"></script>
 
         <script>
             var editor = ace.edit("editor");
             //editor.setTheme("ace/theme/monokai");
-            //editor.getSession().setMode("ace/mode/html");
+            editor.getSession().setMode("ace/mode/html");
 
-            function updatePreview() {
+           function updatePreview() {
                 document.getElementById("post-preview").innerHTML = editor.getValue();
                 var arr = document.getElementById("post-preview").getElementsByTagName('script')
                 for (var n = 0; n < arr.length; n++) {

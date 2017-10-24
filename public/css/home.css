@@ -29,6 +29,18 @@ button {
 #emblem {
     text-align: center;
     margin: 0 auto;
+    padding-top: 10%;
+    margin-bottom: 0px;
+    height: 560px;
+    position: relative;
+}
+
+#awfultext {
+    bottom: 560px;;
+    position: relative;
+}
+
+#globe {
 }
 
 
