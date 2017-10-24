@@ -1,3 +1,5 @@
+const mongoosePaginate = require('mongoose-paginate');
+
 module.exports = function(mongoose) {
     const opts = {
         timestamps: true
@@ -17,6 +19,8 @@ module.exports = function(mongoose) {
             required: true,
         },
     }, opts);
+
+    postSchema.plugin(mongoosePaginate);
 
     return mongoose.model('Post', postSchema);
 }

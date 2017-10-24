@@ -1,0 +1,45 @@
+body {
+    font-family: Arial;
+    font-size: 1em;
+}
+
+button {
+    font-size: 1em;
+}
+
+#most-things {
+    min-width: 500px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+#header-garbage {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.post {
+    border-style: solid;
+    border-width: 3px;
+    border-color: #000;
+    padding: 5px;
+    margin: 10px;
+}
+
+#emblem {
+    text-align: center;
+    margin: 0 auto;
+}
+
+
+#login-toggle {
+    text-align: center;
+    margin: 0 auto;
+}
+
+#login-zone {
+    visibility:hidden;
+    text-align: center;
+    margin: 0 auto;
+}
+

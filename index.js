@@ -8,7 +8,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
 const mn = require('./magic_numbers.json');
 
-mongoose.connect('mongodb://localhost');
+mongoose.connect('mongodb://localhost/');
 mongoose.Promise = global.Promise;
 
 // models
@@ -17,6 +17,7 @@ const User = require('./models/user')(mongoose);
 
 const app = express();
 
+app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(session({ secret: 'keyboard cat' }));
@@ -33,15 +34,17 @@ app.engine('handlebars', exphbs({defaultLayout: false}));
 app.set('view engine', 'handlebars');
 
 app.get('/', function(req, res) {
-    Post.find({}).sort({updatedAt: '-1'}).limit(mn.postsPerPage).exec(function (err, posts) {
-        if (!err) {
-            res.render('home', {posts: posts, user: req.user});
-        }
-    });
-});
+    if (req.isAuthenticated())  {
 
-app.get('/login', (req, res) => {
-    res.render('login', { user : req.user, error: req.flash('error')})
+        if (!req.query.page) req.query.page = 1;
+    
+        Post.paginate({}, { sort: { updatedAt: -1 }, page: req.query.page, limit: mn.postsPerPage }).then(function (response) {
+            res.render('home', { posts: response.docs, currentPage : response.page, totalPages: response.pages, user: req.user });
+    }).catch(function(err) { console.log(err) });;
+    }
+    else {
+        res.render('home');
+    }
 });
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/', failureFlash: true }), (req, res, next) => {
@@ -70,7 +73,7 @@ app.post('/register', (req, res) => {
     });
 });
 
-app.get('/logout', (req, res, next) => {
+app.get('/logout', isLoggedIn, (req, res, next) => {
     req.logout();
     req.session.save((err) => {
         if (err) {
@@ -80,14 +83,28 @@ app.get('/logout', (req, res, next) => {
     });
 });
 
-app.get('/post', function(req, res) {
+app.get('/post', isLoggedIn, function(req, res) {
     res.render('create-post');
 });
 
-app.get('/:username', function(req, res) {
+app.post('/post', isLoggedIn, function(req, res) {
+    if (req.user) {
+        const post = new Post({ user_id: req.user._id, username: req.user.username, post: req.body.post});
+        post.save(function(err, post) {
+            if (err) return console.error(err);
+            else res.redirect('/');
+        })
+    }
+});
+
+
+app.get('/40fucking4', function(req, res) {
+    res.render('notfound');
+});
+
+app.get('/:username', isLoggedIn, function(req, res) {
     User.findOne({username: req.params.username}).exec(function (err, user) {
-        console.log("hey: " + user);
-        if (!err) {
+        if (!err && user) {
             Post.find({username: user.username}).sort({updatedAt: '-1'}).limit(mn.postsPerPage).exec(function (err, posts) {
                 if (!err) {
                     console.log(posts);
@@ -104,7 +121,8 @@ app.get('/:username', function(req, res) {
     });
 });
 
-app.get('/:username/:_id', function(req, res) {
+
+app.get('/:username/:_id', isLoggedIn, function(req, res) {
     Post.findOne({_id: req.params._id}).exec(function (err, post) {
         if (!err) {
             res.render('view-post', post);
@@ -112,12 +130,12 @@ app.get('/:username/:_id', function(req, res) {
     });
 });
 
-app.post('/post', function(req, res) {
-    const post = new Post({ user_id: req.user._id, username: req.user.username, post: req.body.post});
-    post.save(function(err, post) {
-        if (err) return console.error(err);
-        else res.redirect('/');
-    })
-});
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+
+    res.redirect('/');
+}
 
 app.listen(8080);

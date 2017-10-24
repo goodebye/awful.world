@@ -1,18 +1,24 @@
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="/css/home.css">
+        <link rel="shortcut icon" type="image/png" href="/pix/favicon2.png"/>
+        <title>awful.world</title>
     </head>
     <body>
         {{#if user}}
-            <h1>
-                <a href="/">awful.world</a>
-            </h1>
-            <h3>
-                <a href="/post">post!</a>
-            </h3>
-            <h5>
-                hey @<a href="/{{user.username}}">{{user.username}}</a>
-                (<a href="/logout">logout</a>)
-            </h5>
+            <div id="header-garbage">
+                <h1>
+                    <a href="/">awful.world</a>
+                </h1>
+                <h3>
+                    <a href="/post">post!</a>
+                </h3>
+                <h5>
+                    hey @<a href="/{{user.username}}">{{user.username}}</a>
+                    (<a href="/logout">logout</a>)
+                </h5>
+            </div>
+
             <div id='most-things'>
                 {{#each posts}}
                 <div class="post" id="{{username}}/{{_id}}">
@@ -25,30 +31,37 @@
             </div>
         {{else}}
             <div id='most-things'>
-                {{user}}
-                {{error}}
-                <h1> this is a mirage </h1>
-                
-                <form id="login" action="login" method="post">
-                    <label for="login">login</label>
+                <div id='emblem'>
+                    <img src='/pix/emblem.png' alt="a pixelated, crude digital painting of the earth with 'awful world' spray painted on top of it in blood red" />
+                </div>
 
-                    <input name="username" id="post-content" placeholder="username">
-                    <input name="password" type="password" placeholder="password">
-                    <input type="submit" value="Submit">
-                </form>
+                <div id="login-toggle">
+                    <button onClick="showLoginZone()">'this is a mirage'</button>
+                </div>
 
-                <form id="register" action="register" method="post">
-                    <label for="signup">signup</label>
-                    <input name="username" id="post-content" placeholder="username">
-                    <input name="password" type="password" placeholder="password">
-                    <input type="submit" value="Submit">
-                </form>
+                <div id="login-zone">
+                    <form id="login" action="login" method="post">
+                        <div class="err"> {{error}} </div>
+                        <label for="login">login</label>
+                        <input name="username" id="post-content" placeholder="username">
+                        <input name="password" type="password" placeholder="password">
+                        <input type="submit" value=":-)">
+                    </form>
 
-
-                <div id="post-preview">
-
+                    <form id="register" action="register" method="post">
+                        <label for="signup">signup</label>
+                        <input name="username" id="post-content" placeholder="username">
+                        <input name="password" type="password" placeholder="password">
+                        <input type="submit" value=":-)">
+                    </form>
                 </div>
             </div>
+
+            <script>
+                function showLoginZone() {
+                    document.getElementById("login-zone").style.visibility = "visible";
+                }
+            </script>
 
 
         {{/if}}
