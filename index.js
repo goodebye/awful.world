@@ -7,6 +7,11 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
 const mn = require('./magic_numbers.json');
+let ss;
+
+if (process.env.mode != "PRODUCTION") {
+    ss = require('./secretstuff.json');
+} 
 
 const port = process.env.PORT || 3001;
 
@@ -25,6 +30,7 @@ mongoose.Promise = global.Promise;
 // models
 const Post = require('./models/post')(mongoose);
 const User = require('./models/user')(mongoose);
+const Invite = require('./models/invite')(mongoose);
 
 const app = express();
 
@@ -36,13 +42,22 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.engine('handlebars', exphbs({defaultLayout: false}));
 app.set('view engine', 'handlebars');
+
+const adminUsername = process.env.ADMIN_USER || ss.adminUsername;
+const adminPassword = process.env.ADMIN_PASS || ss.adminPassword; 
+
+User.register(new User({ username : adminUsername}), adminPassword, (err, user) => {
+                    if (err) {
+                        console.log(err);
+                    }
+});
+ 
 
 app.get('/', function(req, res) {
     if (req.isAuthenticated())  {
@@ -67,21 +82,37 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/', failur
     });
 });
 
-app.post('/register', (req, res) => {
-        User.register(new User({ username : req.body.username }), req.body.password, (err, user) => {
-        if (err) {
-          return res.render('home', { error : err.message });
-        }
+app.post('/invite/register', (req, res) => {
+    if (req.body.invite_id) {
+        Invite.findById(req.body.invite_id, function(err, invite) {
+            console.log(" boiadfjsad" + err + invite + invite.active);
+            if (!err && invite && invite.active) {
+                User.register(new User({ username : req.body.username, inviteId: invite._id}), req.body.password, (err, user) => {
+                    if (err) {
+                      return res.render('home', { error : err.message });
+                    }
 
-        passport.authenticate('local')(req, res, () => {
-            req.session.save((err) => {
-                if (err) {
-                    return next(err);
-                }
+                    invite.active = false;
+                    invite.save((req, res) => { return });
+
+                    passport.authenticate('local')(req, res, () => {
+                        req.session.save((err) => {
+                            if (err) {
+                                return next(err);
+                            }
+                            res.redirect('/');
+                        });
+                    });
+                });
+            }
+            else {
                 res.redirect('/');
-            });
-        });
-    });
+            }
+        })
+    }
+    else {
+        res.redirect('/');
+    }
 });
 
 app.get('/logout', isLoggedIn, (req, res, next) => {
@@ -111,6 +142,36 @@ app.post('/post', isLoggedIn, function(req, res) {
 
 app.get('/40fucking4', function(req, res) {
     res.render('notfound');
+});
+
+app.post('/invite/create', isLoggedIn, function(req, res) {
+    console.log("\n"+req.user._id)
+    const invite = new Invite({ userId: req.user._id });
+
+    invite.save(function(err, invite) {
+        if (err) return console.error(err);
+        else {
+            User.update({_id: req.user._id}, { $push: { invites: invite}}, function(err, user) {
+                res.redirect('/');
+            });
+       }
+    });
+});
+
+app.get('/invite/:invite_id', function(req, res) {
+    Invite.findOne({_id: req.params.invite_id}).exec(function  (err, invite) {
+        if (!err && invite) {
+            if (req.user) {
+                res.redirect('/');
+            }
+            else {
+                res.render('signup', {invite_id:  req.params.invite_id}); 
+            }
+        }
+        else {
+            res.redirect('/40fucking4');
+        }
+    });
 });
 
 app.get('/:username', isLoggedIn, function(req, res) {

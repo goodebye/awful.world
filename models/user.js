@@ -11,6 +11,12 @@ module.exports = function(mongoose) {
             required: true,
             default: "you can put anything here!!!",
         },
+        invites: [mongoose.Schema.Types.ObjectId],
+        inviteId: {
+            type: String,
+            required: true,
+            default: "patient0"
+        },
         username: String,
         password: String
      }, opts);

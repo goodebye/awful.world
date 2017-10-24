@@ -15,8 +15,16 @@
                 </h3>
                 <h5>
                     hey @<a href="/{{user.username}}">{{user.username}}</a>
-                    (<a href="/logout">logout</a>)
+                    (<a href="/logout">logout</a>)               
                 </h5>
+                    <form id="invite" action="invite/create" method="post">
+                        <div class="err"> {{error}} </div>
+                        <input type="submit" value="invite">
+                    </form>
+
+                {{#each user.invites}}
+                    {{this}}&nbsp;
+                {{/each}}
             </div>
 
             <div id='most-things'>
