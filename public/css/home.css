@@ -18,6 +18,11 @@ button {
     margin: 0 auto;
 }
 
+#login-button {
+    margin: 10px;
+    padding: 10px 40px;
+}
+
 .post {
     border-style: solid;
     border-width: 3px;
