@@ -68,7 +68,6 @@
 
                 function map(n, start1, stop1, start2, stop2) {
                     //stolen from p5.js
-                    console.log(n, start1, stop1, start2, stop2);
                     return ((n - start1)/(stop1 - start1)) * (stop2 - start2) + start2;
                 };
 
@@ -80,13 +79,12 @@
                     const halfh = document.body.clientHeight / 2;
                     const scale = .05;
                     const globescale = 0.5;
+                    const bgscale = 0.01
                     
                     const padL = map(e.clientX, 0, document.body.clientWidth / 2, -halfw * scale, halfw * scale);
                     const padT = map(e.clientY, 0, document.body.clientHeight / 2, -halfh * scale, halfh * scale) + halfh * scale;;
 
-
-
-                    console.log( `${padT}px 0px 0px ${padL}px`);
+                    document.body.style.backgroundPosition = `${padL * bgscale}% ${padT * bgscale}%`;
 
                     awfultext.style.margin = `${-padT * globescale + halfh * scale}px 0px 0px ${-padL*globescale}px`;
 
